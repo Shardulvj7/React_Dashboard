@@ -1,0 +1,238 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Hind", sans-serif;
+background-image: url(sassets/Filter\ 2.png);
+background-repeat: no-repeat, repeat;
+background-position: center; /* Center the image */
+background-size: cover;
+}
+
+/* Start Navigation Bar */
+.ic{
+  margin-left: 20px;
+}
+.container__listItem{
+  color: #db6356;
+ 
+}
+.navbar {
+  width: 100%;
+  margin: 0 auto;
+  color: #cfab71;
+  border-radius: 0px;
+  background-color: #25283d;
+}
+
+.menu h1{
+  margin: auto 20px;
+  font-size: 35px;
+  font-weight: 600;
+}
+
+.navbar .menu {
+  position: relative;
+  display: flex;
+}
+
+.navbar .menu li {
+  display: flex;
+  transition: background-color 0.5s ease;
+  text-align: center;
+  flex: 1;
+}
+
+.navbar .menu a {
+  position: relative;
+  display: inline-flex;
+  padding: 20px;
+  text-decoration: none;
+  color: #f9f9f5;
+  flex: 1;
+  justify-content: center;
+}
+
+.navbar .menu a > .fa {
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.navbar .menu li:hover {
+  background-color: #398f6e;
+}
+
+.navbar .menu li:hover .container {
+  display: flex;
+}
+
+a.hasDropdown:after {
+  position: absolute;
+  z-index: 2;
+  bottom: -16px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: #25283d;
+}
+
+li:hover a.hasDropdown:after {
+  content: "";
+  border-top-color: #8f3985;
+}
+
+/* End Navigation Bar */
+
+/* Start Single Section Menu */
+.container__listItem button{
+  color: #cfab71;
+}
+.container {
+  position: absolute;
+  z-index: 1;
+  top: 56px;
+  right: 0;
+  left: 0;
+  display: none;
+  margin-bottom: 30px;
+  text-align: left;
+  background-color: #fff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.container__list {
+  display: flex;
+  min-width: 0;
+  padding: 20px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.container__listItem {
+  overflow: hidden;
+  padding: 10px 30px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 0 0 25%;
+}
+
+.container__listItem > div {
+  overflow: hidden;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  color: #7a2920;
+}
+
+/* End Single Section Menu */
+
+/* Start Multiple Section Menu */
+
+.container.has-multi .container__listItem {
+  flex-basis: 100%;
+  background-color: #25283d;
+  color: #fff;
+  text-decoration: none;
+}
+
+.container.has-multi .container__list {
+  border-radius: 4px;
+  flex-basis: 33.333%;
+}
+
+.container.has-multi .container__list:not(:last-child) {
+  margin-right: 20px;
+  border-right: solid 1px #f3f3f3;
+}
+
+/* End Multiple Section Menu */
+
+/* Start Responsive Menu */
+
+.mobile-menu {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .mobile-menu {
+    display: block;
+    margin: 20px;
+  }
+  .mobile-menu > i {
+    cursor: pointer;
+  }
+  .navbar {
+    position: absolute;
+    transition: top 0.3s ease-in;
+    top: -100%;
+    border-radius: 0;
+    will-change: top;
+  }
+  .navbar--is-visible {
+    top: 88px;
+  }
+  .navbar .menu {
+    flex-direction: column;
+  }
+  .navbar .menu li {
+    position: relative;
+    flex-direction: column;
+    transition: initial;
+  }
+  .navbar .menu li:hover {
+    background-color: initial;
+  }
+  .navbar .menu li.is-selected {
+    position: relative;
+    background-color: #8f3985;
+  }
+  .container {
+    position: static;
+    display: flex;
+    overflow: hidden;
+    max-height: 0;
+    margin-bottom: 0;
+    transition: all 0.3s ease;
+  }
+
+.show{
+  display: block;
+}
+
+  a.hasDropdown:after {
+    display: none;
+  }
+  .container--is-visible {
+    max-height: 1000px !important;
+  }
+  .container__list .container__listItem:nth-child(n + 11) {
+    display: none;
+  }
+  .container.has-multi .container__list-multi:not(:first-child) {
+    display: none;
+  }
+  .menu .container.has-multi .container__list {
+    margin-right: 0;
+    border-right: 0;
+  }
+  .navbar .menu li .container__listItem {
+    flex-basis: 100%;
+  }
+}
+.sensor-box{
+  color: rgb(13, 11, 11);
+  border: 2px solid black;
+  background-color: burlywood;
+  padding: 5px;
+  text-align: center;
+  width: 300px;
+  margin: 20px;
+  border-radius: 15px;
+  height: 150px;
+  padding: 20px;
+  margin-left: 50px;
+}
