@@ -2,17 +2,24 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Custom Path with Markers and Route</title>
+    <title>Custom Path with Markers and Directions</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" type="text/css">
     <style>
         body { margin: 0; padding: 0; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
         .marker {
-            /* Custom styles for your marker */
-            border-radius: 50%; /* Example: makes the marker circular */
-            border: 2px solid white; /* Example: adds a white border */
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .mapboxgl-ctrl-directions .mapboxgl-ctrl-geocoder {
+            display: none;
+        }
+        .mapboxgl-ctrl-directions {
+            display: none;
         }
     </style>
 </head>
@@ -20,68 +27,45 @@
     <div id="map"></div>
 
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhcmR1bC12aiIsImEiOiJjbHNyM2gyMDYwMDA2MnFwZ21jOXd2MjFnIn0.39k9JHj9z2K9_mAMnLfY5g';  
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhcmR1bC12aiIsImEiOiJjbHNyM2gyMDYwMDA2MnFwZ21jOXd2MjFnIn0.39k9JHj9z2K9_mAMnLfY5g';
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v12',
-            center: [73.8553, 18.4635], // Centered on Bibwewadi, Pune
+            center: [73.8553, 18.4635], // A central point in Pune
             zoom: 14
         });
 
-        // Function to fetch sensor locations and display markers
-        function displaySensorLocations() {
-            const sensorLocations = [];
-            const sensorData = JSON.parse(decodeURIComponent(getQueryParams().sensorData));
-            console.log("Sensor Data:", sensorData); // Check if sensor data is fetched correctly
-            sensorData.forEach(sensor => {
-                if (sensor.location && sensor.location.lat && sensor.location.lon) {
-                    sensorLocations.push([sensor.location.lat, sensor.location.lon]);
+        function displaySensorLocationsAndPath() {
+            const sensorData = JSON.parse(decodeURIComponent(getQueryParams().sensorData || '[]'));
+            const locations = sensorData.map(sensor => [sensor.location.lat, sensor.location.lon]);
+
+            map.on('load', () => {
+                const directions = new MapboxDirections({
+                    accessToken: mapboxgl.accessToken,
+                    unit: 'metric',
+                    profile: 'mapbox/driving',
+                    alternatives: false,
+                    geometries: 'geojson',
+                    interactive: false // This disables map interactions for setting/changing routes
+
+                });
+
+                map.addControl(directions, 'top-left');
+
+                if (locations.length > 0) {
+                    directions.setOrigin(locations[0]);
+                    locations.slice(1, -1).forEach((loc, index) => directions.addWaypoint(index, loc));
+                    directions.setDestination(locations[locations.length - 1]);
+
+                    locations.forEach(location => {
+                        new mapboxgl.Marker()
+                            .setLngLat(location)
+                            .addTo(map);
+                    });
                 }
             });
-            console.log("Sensor Locations:", sensorLocations); // Check if sensor locations are fetched correctly
-
-            // Add markers for each sensor location
-            sensorLocations.forEach(location => {
-                console.log("Adding marker at:", location); // Check if marker is added at correct location
-                new mapboxgl.Marker()
-                    .setLngLat(location)
-                    .addTo(map);
-            });
-
-            // Add route between the first and last sensor locations
-            if (sensorLocations.length >= 2) {
-                const routeCoordinates = [sensorLocations[0], sensorLocations[sensorLocations.length - 1]];
-                const route = {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': {
-                        'type': 'LineString',
-                        'coordinates': routeCoordinates
-                    }
-                };
-
-                map.on('load', function() {
-                    map.addLayer({
-                        'id': 'route',
-                        'type': 'line',
-                        'source': {
-                            'type': 'geojson',
-                            'data': route
-                        },
-                        'layout': {
-                            'line-join': 'round',
-                            'line-cap': 'round'
-                        },
-                        'paint': {
-                            'line-color': '#FF0000',
-                            'line-width': 4
-                        }
-                    });
-                });
-            }
         }
 
-        // Function to get query parameters from URL
         function getQueryParams() {
             const params = {};
             const searchParams = new URLSearchParams(window.location.search);
@@ -90,11 +74,8 @@
             }
             return params;
         }
-      
-        // Call function to display sensor locations when window loads
-        window.onload = function() {
-            displaySensorLocations();
-        };
+
+        displaySensorLocationsAndPath();
     </script>
 </body>
 </html>
